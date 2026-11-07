@@ -62,16 +62,11 @@
       add(hundredsA*100+addTensA*10+addOnesA,"+",hundredsB*100+addTensB*10+addOnesB,"三位数不进位加法");
       a=rand(11,18); add(a,"−",rand(Math.max(2,a-9),Math.min(9,a-1)),"20 以内减法");
       const tensA=rand(4,9),onesA=rand(0,9),tensB=rand(1,tensA-1),onesB=rand(0,onesA); add(tensA*10+onesA,"−",tensB*10+onesB,"两位数减法 · 不借位");
-      add(6,"×",rand(7,9),"进阶乘法");
-      const hardPairs=[[7,7],[7,8],[8,8],[10,11],[11,11],[11,12],[12,12],[12,13],[13,13],[13,14],[14,14],[14,15],[15,15]],hard=hardPairs[rand(0,hardPairs.length-1)]; add(hard[0],"×",hard[1],"挑战乘法");
-      let divisor=rand(2,5),quotient=rand(3,6); while(divisor*quotient<12){divisor=rand(2,5);quotient=rand(3,6)} add(divisor*quotient,"÷",divisor,"小数整除");
+      const twoDigitOne=rand(11,24),oneDigitOne=rand(3,9); add(twoDigitOne,"×",oneDigitOne,"两位数乘一位数");
+      let twoDigitTwo,oneDigitTwo; do{twoDigitTwo=rand(15,29);oneDigitTwo=rand(3,9)}while(twoDigitTwo===twoDigitOne&&oneDigitTwo===oneDigitOne); add(twoDigitTwo,"×",oneDigitTwo,"两位数乘一位数");
+      const squareBase=rand(7,15); add(squareBase,"×",squareBase,"完全平方数");
+      let divisor=rand(2,9),quotient=rand(10,19); add(divisor*quotient,"÷",divisor,"商是两位数的整除");
       divisor=rand(7,9); quotient=rand(7,9); add(divisor*quotient,"÷",divisor,"大数整除");
-      if(rand(1,100)<=75){
-        do{divisor=rand(10,22);quotient=rand(6,15)}while(divisor*quotient<=100);
-      }else{
-        divisor=rand(2,15);quotient=rand(2,15);
-      }
-      add(divisor*quotient,"÷",divisor,"随机整除");
       return qs;
     }
     function generateFreshQuestions(){
