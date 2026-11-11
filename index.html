@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>口算抢答小队</title>
-  <meta name="description" content="每次都是全新的十道口算题，和马东亮、小猴、王小北一起抢答，完成挑战抢红包！">
+  <meta name="description" content="每次都是全新的十二道口算题，和马东亮、小猴、王小北一起抢答，完成挑战抢红包！">
   <meta name="theme-color" content="#169c87">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="口算抢答">
@@ -30,7 +30,7 @@
 <body>
   <header><div class="brand"><span class="logo">＋</span>口算抢答小队</div><span class="date" id="date"></span></header>
   <main>
-    <div class="topline"><div><h1>今天，也要闪闪发光！</h1></div><div class="daily">☀️ 每次 10 题</div></div>
+    <div class="topline"><div><h1>今天，也要闪闪发光！</h1></div><div class="daily">☀️ 每次 12 题</div></div>
     <div class="layout">
       <section class="board" aria-label="口算挑战">
         <div id="play">
@@ -43,7 +43,7 @@
       </section>
       <aside class="side">
         <section class="friends"><h2>你的抢答搭子</h2><img id="art" src="friends-wenbao.png" alt="开心的马东亮、小猴和文宝"><div class="names" id="friendnames"><span>马东亮</span><span>小猴</span><span>文宝</span></div><div class="bubble" id="bubble" aria-live="polite">准备好啦！<br>看看这次谁的小脑袋转得快～</div></section>
-        <section class="reward"><span class="rewardicon">🧧</span><div><strong>答完十题，红包雨！</strong><p>点一点红包，收集幸运星星</p></div></section>
+        <section class="reward"><span class="rewardicon">🧧</span><div><strong>答完十二题，红包雨！</strong><p>点一点红包，收集幸运星星</p></div></section>
       </aside>
     </div>
   </main>
@@ -56,6 +56,8 @@
     function generateQuestions(){
       const qs=[];
       const add=(a,op,b,type)=>qs.push({a,b,op,type,result:op==="+"?a+b:op==="−"?a-b:op==="×"?a*b:a/b});
+      let largeAddA=rand(7,9),largeAddB=rand(7,Math.min(9,20-largeAddA)); add(largeAddA,"+",largeAddB,"20 以内大数加法");
+      let largeAddC,largeAddD; do{largeAddC=rand(7,9);largeAddD=rand(7,Math.min(9,20-largeAddC))}while(largeAddC===largeAddA&&largeAddD===largeAddB||largeAddC===largeAddB&&largeAddD===largeAddA); add(largeAddC,"+",largeAddD,"20 以内大数加法");
       let a=rand(5,9); add(a,"+",rand(Math.max(5,11-a),Math.min(9,20-a)),"20 以内加法");
       let b; do{a=rand(21,69);b=rand(11,99-a)}while(a%10+b%10<10); add(a,"+",b,"两位数进位加法");
       const hundredsA=rand(1,4),hundredsB=rand(1,Math.min(4,9-hundredsA)),addTensA=rand(0,9),addTensB=rand(0,9-addTensA),addOnesA=rand(0,9),addOnesB=rand(0,9-addOnesA);
@@ -82,12 +84,12 @@
       {names:["马东亮","小猴","文宝"],art:"friends-wenbao.png"},
       {names:["马东亮","小猴","王小北"],art:"friends-v2.png"}
     ];
-    function currentTeam(){return teams[index<5?0:1]}
+    function currentTeam(){return teams[index<6?0:1]}
     function stopTimer(){clearTimeout(timer)}
     function render(){
       stopTimer(); solved=false; mistakes=0; const q=questions[index];
       const team=currentTeam();$("art").src=team.art;$("art").alt=`开心的${team.names.join("、")}`;$("friendnames").innerHTML=team.names.map(name=>`<span>${name}</span>`).join("");
-      $("progress").textContent=`第 ${index+1} / 10 题`;
+      $("progress").textContent=`第 ${index+1} / ${questions.length} 题`;
       $("dots").innerHTML=questions.map((_,i)=>`<span class="dot ${i<index?"done":i===index?"now":""}"></span>`).join("");
       $("equation").innerHTML=`${q.a} ${q.op} ${q.b} = <span class="unknown">?</span>`;
       $("answer").value=""; $("answer").disabled=false; $("submit").disabled=false; $("next").classList.add("hidden");
@@ -95,24 +97,24 @@
       timer=setTimeout(()=>{const friends=currentTeam().names,name=friends[rand(0,friends.length-1)];$("bubble").innerHTML=`<span class="wave">✋</span> ${name}举手了！<br>“我想出来了，你想出来了吗？”`},20000);
     }
     function submitAnswer(){
-      if(solved||index>=10)return false; const value=$("answer").value.trim();
+      if(solved||index>=questions.length)return false; const value=$("answer").value.trim();
       if(!/^\d{1,3}$/.test(value)){ $("feedback").textContent="先写一个数字答案吧。"; return false }
       if(Number(value)!==questions[index].result){mistakes++;$("feedback").className="feedback";$("feedback").textContent="还差一点点，再算一遍吧！";$("answer").select();return false}
-      solved=true;stopTimer();if(mistakes===0)correct++;$("answer").disabled=true;$("submit").disabled=true;$("feedback").className="feedback correct";$("feedback").textContent="⭐ 答对啦！你的小脑袋真灵光！";$("bubble").textContent=`${currentTeam().names.join("、")}：原来如此！给你鼓鼓掌！👏`;$("next").textContent=index===9?"完成挑战，抢红包！ 🧧":"下一题";$("next").classList.remove("hidden");$("next").focus();return true;
+      solved=true;stopTimer();if(mistakes===0)correct++;$("answer").disabled=true;$("submit").disabled=true;$("feedback").className="feedback correct";$("feedback").textContent="⭐ 答对啦！你的小脑袋真灵光！";$("bubble").textContent=`${currentTeam().names.join("、")}：原来如此！给你鼓鼓掌！👏`;$("next").textContent=index===questions.length-1?"完成挑战，抢红包！ 🧧":"下一题";$("next").classList.remove("hidden");$("next").focus();return true;
     }
     function complete(){
       stopTimer();$("play").classList.add("hidden");$("finish").classList.remove("hidden");
-      $("finish").innerHTML=`<div class="bigstar">🏆</div><h2>十题挑战，完成！</h2><p>你坚持思考的样子，真的很棒！</p><div class="stats"><div><b>10</b><span>完成题目</span></div><div><b>${correct}</b><span>一次答对</span></div><div><b id="starcount">${stars}</b><span>幸运星星</span></div></div><button class="primary" id="rewardbtn">🧧 开始抢红包</button><p>想继续挑战，还可以换一套全新的题！</p><button class="quiet" id="again">换一套新题</button>`;
+      $("finish").innerHTML=`<div class="bigstar">🏆</div><h2>十二题挑战，完成！</h2><p>你坚持思考的样子，真的很棒！</p><div class="stats"><div><b>${questions.length}</b><span>完成题目</span></div><div><b>${correct}</b><span>一次答对</span></div><div><b id="starcount">${stars}</b><span>幸运星星</span></div></div><button class="primary" id="rewardbtn">🧧 开始抢红包</button><p>想继续挑战，还可以换一套全新的题！</p><button class="quiet" id="again">换一套新题</button>`;
       $("rewardbtn").onclick=startRain;$("again").onclick=startNewSet;$("bubble").textContent="小队全员为你欢呼！还要再来一套吗？🎉";
     }
     function startNewSet(){stopTimer();questions=generateFreshQuestions();index=0;correct=0;stars=0;rainStarted=false;$("finish").classList.add("hidden");$("play").classList.remove("hidden");render()}
     function packet(){const p=document.createElement("button");p.className="packet";p.setAttribute("aria-label","抢红包，获得星星");p.style.left=`${3+Math.random()*76}%`;p.style.animationDuration="6.5s";let collected=false;const collect=event=>{if(collected)return;collected=true;event?.preventDefault();stars+=rand(1,3);$("rainstatus").textContent=`已经抢到 ${stars} 颗幸运星星 ⭐`;p.remove()};p.onpointerdown=collect;p.onclick=collect;p.onanimationend=()=>p.remove();$("rain").appendChild(p)}
     function startRain(){if(rainStarted)return;rainStarted=true;$("rain").classList.remove("hidden");$("rainend").focus();packet();rainInterval=setInterval(packet,550);rainTimeout=setTimeout(()=>{clearInterval(rainInterval);$("raintitle").textContent="满满好运，送给你！";$("rainstatus").textContent=`你收集了 ${stars} 颗幸运星星 ⭐`},15000)}
     function endRain(){clearInterval(rainInterval);clearTimeout(rainTimeout);$("rain").classList.add("hidden");document.querySelectorAll(".packet").forEach(p=>p.remove());$("starcount").textContent=stars;$("rewardbtn").textContent=`⭐ 已收好 ${stars} 颗星星`;$("rewardbtn").disabled=true;$("again").focus()}
-    $("rainend").onclick=endRain;$("form").onsubmit=e=>{e.preventDefault();submitAnswer()};$("answer").oninput=()=>{$("answer").value=$("answer").value.replace(/\D/g,"").slice(0,3)};$("next").onclick=()=>{index++;index===10?complete():render()};
+    $("rainend").onclick=endRain;$("form").onsubmit=e=>{e.preventDefault();submitAnswer()};$("answer").oninput=()=>{$("answer").value=$("answer").value.replace(/\D/g,"").slice(0,3)};$("next").onclick=()=>{index++;index===questions.length?complete():render()};
     ["1","2","3","4","5","6","7","8","9","0","⌫","清空"].forEach(key=>{const button=document.createElement("button");button.type="button";button.textContent=key;button.setAttribute("aria-label",key==="⌫"?"删除一位":key);button.onclick=()=>{if(solved)return;$("answer").value=key==="清空"?"":key==="⌫"?$("answer").value.slice(0,-1):($("answer").value+key).slice(0,3)};$("keypad").appendChild(button)});
     document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("rain").classList.contains("hidden"))endRain()});render();
-    if(document.modelContext?.registerTool){try{document.modelContext.registerTool({name:"read_math_challenge",description:"Read the current arithmetic question and completion progress.",inputSchema:{type:"object",properties:{},additionalProperties:false},annotations:{readOnlyHint:true,untrustedContentHint:false},execute:()=>({question:index<10?`${questions[index].a} ${questions[index].op} ${questions[index].b}`:null,number:Math.min(index+1,10),solved,completed:index===10})})}catch(error){}}
+    if(document.modelContext?.registerTool){try{document.modelContext.registerTool({name:"read_math_challenge",description:"Read the current arithmetic question and completion progress.",inputSchema:{type:"object",properties:{},additionalProperties:false},annotations:{readOnlyHint:true,untrustedContentHint:false},execute:()=>({question:index<questions.length?`${questions[index].a} ${questions[index].op} ${questions[index].b}`:null,number:Math.min(index+1,questions.length),solved,completed:index===questions.length})})}catch(error){}}
   </script>
   <script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}))}</script>
 </body>
